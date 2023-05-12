@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  backend:
+    container_name: reserve-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    container_name: reserve-db
+    image: postgres:11-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=reserve
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin2023
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - ./docker_volumes/pg_data:/var/lib/postgresql/data
