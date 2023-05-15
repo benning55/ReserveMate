@@ -1,17 +1,30 @@
 package main
 
 import (
-	"net/http"
+	"ReserveMate/backend/pkg/config"
+	"ReserveMate/backend/pkg/infrastructure/datastore"
+	"ReserveMate/backend/pkg/infrastructure/router"
+	"ReserveMate/backend/pkg/registry"
+	"fmt"
+	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	r := gin.Default()
+	config.ReadConfig()
 
-	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "hello world")
-	})
+	db := datastore.NewDB()
 
-	r.Run()
+	datastore.AutoMigrate(db)
+
+	r := registry.NewRegistry(db)
+
+	e := echo.New()
+	e = router.NewRouter(e, r.NewAppController())
+
+	fmt.Println("Server listen at http://localhost" + ":" + config.C.Server.Address)
+	if err := e.Start(":" + config.C.Server.Address); err != nil {
+		log.Fatalln(err)
+	}
 }

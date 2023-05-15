@@ -1,1 +1,4 @@
 /docker_volumes/*
+backend/target/server
+backend/.vscode/settings.json
+docker_volumes/pg_data/**

@@ -1,21 +1,25 @@
 package usecase
 
 import (
-	"github.com/benning55/go-clean-arch/pkg/domain/model"
-	"github.com/benning55/go-clean-arch/pkg/usecase/repository"
+	"ReserveMate/backend/pkg/domain/model"
+	"ReserveMate/backend/pkg/usecase/repository"
+	"errors"
 )
 
 type userUsecase struct {
 	userRepository repository.UserRepository
+	dBRepository   repository.DBRepository
 }
 
 type User interface {
 	List(u []*model.User) ([]*model.User, error)
+	Create(u *model.User) (*model.User, error)
 }
 
-func NewUserUsecase(r repository.UserRepository) User {
+func NewUserUsecase(r repository.UserRepository, d repository.DBRepository) User {
 	return &userUsecase{
 		userRepository: r,
+		dBRepository:   d,
 	}
 }
 
@@ -25,4 +29,23 @@ func (uu *userUsecase) List(u []*model.User) ([]*model.User, error) {
 		return nil, err
 	}
 	return u, nil
+}
+
+func (uu *userUsecase) Create(u *model.User) (*model.User, error) {
+	data, err := uu.dBRepository.Transaction(func(i interface{}) (interface{}, error) {
+		u, err := uu.userRepository.Create(u)
+
+		return u, err
+	})
+	user, ok := data.(*model.User)
+
+	if !ok {
+		return nil, errors.New("cast error")
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

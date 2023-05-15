@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/benning55/go-clean-arch/pkg/domain/model"
-	"github.com/benning55/go-clean-arch/pkg/usecase/usecase"
+	"ReserveMate/backend/pkg/domain/model"
+	"ReserveMate/backend/pkg/usecase/usecase"
+	"fmt"
 	"net/http"
 )
 
@@ -12,6 +13,7 @@ type userController struct {
 
 type User interface {
 	GetUsers(ctx Context) error
+	CreateUser(ctx Context) error
 }
 
 func NewUserController(us usecase.User) User {
@@ -27,6 +29,23 @@ func (uc userController) GetUsers(ctx Context) error {
 	if err != nil {
 		return err
 	}
+	fmt.Printf("*********")
+	fmt.Printf("%v", u)
 
 	return ctx.JSON(http.StatusOK, u)
+}
+
+func (uc userController) CreateUser(ctx Context) error {
+	var params model.User
+
+	if err := ctx.Bind(&params); err != nil {
+		return err
+	}
+
+	u, err := uc.userUsecase.Create(&params)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusCreated, u)
 }
