@@ -2,3 +2,7 @@
 backend/target/server
 backend/.vscode/settings.json
 docker_volumes/**
+frontend/package-lock.json
+
+/frontend/node_modules
+/frontend-b/
