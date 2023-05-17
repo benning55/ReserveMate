@@ -34,9 +34,9 @@ func (ur *userRepository) Create(u *model.User) (*model.User, error) {
 }
 
 func (ur *userRepository) GetUserByEmail(email string) (*model.User, error) {
-	var user = model.User{Email: email}
-	if err := ur.db.First(&user).Error; err != nil {
-		return nil, err
+	var user model.User
+	if result := ur.db.Where("email = ?", email).First(&user); result.Error != nil {
+		return nil, result.Error
 	}
 	return &user, nil
 }

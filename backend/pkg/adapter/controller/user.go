@@ -53,11 +53,9 @@ func (uc userController) CreateUser(ctx Context) error {
 
 func (uc userController) GetUserByEmail(ctx Context) error {
 	email := ctx.Param("email")
-	u := model.User{
-		Email:      email,
-		Name:       "test name",
-		Age:        "25",
-		LineUserID: "llll",
+	u, err := uc.userUsecase.GetUserByEmail(email)
+	if err != nil {
+		return ctx.JSON(http.StatusNotFound, err)
 	}
 	return ctx.JSON(http.StatusOK, u)
 }
