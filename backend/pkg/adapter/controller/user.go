@@ -14,6 +14,7 @@ type userController struct {
 type User interface {
 	GetUsers(ctx Context) error
 	CreateUser(ctx Context) error
+	GetUserByEmail(ctx Context) error
 }
 
 func NewUserController(us usecase.User) User {
@@ -48,4 +49,15 @@ func (uc userController) CreateUser(ctx Context) error {
 	}
 
 	return ctx.JSON(http.StatusCreated, u)
+}
+
+func (uc userController) GetUserByEmail(ctx Context) error {
+	email := ctx.Param("email")
+	u := model.User{
+		Email:      email,
+		Name:       "test name",
+		Age:        "25",
+		LineUserID: "llll",
+	}
+	return ctx.JSON(http.StatusOK, u)
 }

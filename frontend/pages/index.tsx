@@ -2,11 +2,20 @@ import type { Liff } from "@line/liff";
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
+import { useState, useEffect } from "react"
 
 const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
   liff,
   liffError
 }) => {
+  useEffect(() => {
+    console.log(liff)
+    // if (!liff.isInClient()) {
+    //   setCheckClient("Is in client")
+    // } else {
+    //   setCheckClient("Is in external browser")
+    // }
+  }, [])
   return (
     <div>
       <Head>
@@ -17,7 +26,7 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
 
       <main className={styles.main}>
         <h1>create-liff-app</h1>
-        {liff && <p>LIFF init succeeded.</p>}
+        {liff && <p>LIFF init succeeded. </p>}
         {liffError && (
           <>
             <p>LIFF init failed.</p>

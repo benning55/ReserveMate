@@ -32,3 +32,11 @@ func (ur *userRepository) Create(u *model.User) (*model.User, error) {
 
 	return u, nil
 }
+
+func (ur *userRepository) GetUserByEmail(email string) (*model.User, error) {
+	var user = model.User{Email: email}
+	if err := ur.db.First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

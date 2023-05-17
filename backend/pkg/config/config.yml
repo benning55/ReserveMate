@@ -2,6 +2,7 @@ database:
   user: root
   password: root
   net: tcp
+  host: localhost
   addr: 127.0.0.1:3306
   dbname: golang_clean_architecture
   allowNativePasswords: true

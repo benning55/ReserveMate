@@ -14,6 +14,7 @@ type userUsecase struct {
 type User interface {
 	List(u []*model.User) ([]*model.User, error)
 	Create(u *model.User) (*model.User, error)
+	GetUserByEmail(email string) (*model.User, error)
 }
 
 func NewUserUsecase(r repository.UserRepository, d repository.DBRepository) User {
@@ -48,4 +49,12 @@ func (uu *userUsecase) Create(u *model.User) (*model.User, error) {
 	}
 
 	return user, nil
+}
+
+func (uu *userUsecase) GetUserByEmail(email string) (*model.User, error) {
+	u, err := uu.userRepository.GetUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }

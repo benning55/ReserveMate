@@ -12,6 +12,9 @@ func NewRouter(e *echo.Echo, c controller.AppController) *echo.Echo {
 	e.Use(middleware.Recover())
 
 	e.GET("/users", func(context echo.Context) error { return c.User.GetUsers(context) })
+	e.GET("/users/email/:email", func(context echo.Context) error {
+		return c.User.GetUserByEmail(context)
+	})
 	e.POST("/users", func(context echo.Context) error {
 		return c.User.CreateUser(context)
 	})

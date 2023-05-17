@@ -17,6 +17,7 @@ type config struct {
 		User                 string
 		Password             string
 		Net                  string
+		Host                 string
 		Addr                 string
 		DBName               string
 		AllowNativePasswords bool
