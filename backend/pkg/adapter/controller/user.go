@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"ReserveMate/backend/pkg/common/rserrors"
 	"ReserveMate/backend/pkg/domain/model"
 	"ReserveMate/backend/pkg/usecase/usecase"
 	"fmt"
@@ -55,7 +56,13 @@ func (uc userController) GetUserByEmail(ctx Context) error {
 	email := ctx.Param("email")
 	u, err := uc.userUsecase.GetUserByEmail(email)
 	if err != nil {
-		return ctx.JSON(http.StatusNotFound, err)
+		status, response := rserrors.NotFoundError{
+			Err: err,
+			Meta: map[string]interface{}{
+				"email": email,
+			},
+		}.RenderErrorResponse()
+		return ctx.JSON(status, response)
 	}
 	return ctx.JSON(http.StatusOK, u)
 }
