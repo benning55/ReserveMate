@@ -10,7 +10,7 @@ import (
 
 func NewDB() *gorm.DB {
 	// dsn := fmt.Sprintf("host=%s user=admin password=admin2023 dbname=reserve port=5432 sslmode=disable TimeZone=Asia/Bangkok", config.C.Database.Host)
-	dsn := "host=db user=admin password=admin2023 dbname=reserve port=5432 sslmode=disable TimeZone=Asia/Bangkok"
+	dsn := "host=localhost user=admin password=admin2023 dbname=reserve port=5432 sslmode=disable TimeZone=Asia/Bangkok"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalln(err)
@@ -22,5 +22,6 @@ func NewDB() *gorm.DB {
 func AutoMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&model.User{},
+		&model.Merchant{},
 	)
 }

@@ -6,6 +6,8 @@ import (
 	"ReserveMate/backend/pkg/usecase/usecase"
 	"fmt"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 type userController struct {
@@ -16,6 +18,7 @@ type User interface {
 	GetUsers(ctx Context) error
 	CreateUser(ctx Context) error
 	GetUserByEmail(ctx Context) error
+	LogIn(ctx Context) error
 }
 
 func NewUserController(us usecase.User) User {
@@ -25,14 +28,13 @@ func NewUserController(us usecase.User) User {
 }
 
 func (uc userController) GetUsers(ctx Context) error {
+	fmt.Println("adapter-controller")
 	var u []*model.User
 
 	u, err := uc.userUsecase.List(u)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("*********")
-	fmt.Printf("%v", u)
 
 	return ctx.JSON(http.StatusOK, u)
 }
@@ -45,8 +47,12 @@ func (uc userController) CreateUser(ctx Context) error {
 	}
 
 	u, err := uc.userUsecase.Create(&params)
+
 	if err != nil {
-		return err
+		status, response := rserrors.BadRequestError{
+			Err: err,
+		}.RenderErrorResponse()
+		return ctx.JSON(status, response)
 	}
 
 	return ctx.JSON(http.StatusCreated, u)
@@ -65,4 +71,24 @@ func (uc userController) GetUserByEmail(ctx Context) error {
 		return ctx.JSON(status, response)
 	}
 	return ctx.JSON(http.StatusOK, u)
+}
+
+func (uc userController) LogIn(ctx Context) error {
+	var params model.User
+
+	if err := ctx.Bind(&params); err != nil {
+		return err
+	}
+
+	token, err := uc.userUsecase.LogIn(params.Email)
+	if err != nil {
+		status, response := rserrors.NotFoundError{
+			Err: err,
+		}.RenderErrorResponse()
+		return ctx.JSON(status, response)
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"token": token,
+	})
 }
